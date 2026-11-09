@@ -1,179 +1,345 @@
-# AI Phone
+# AI Phone — Real-Time Object Detection
 
-AI Phone is an ongoing computer-vision project with a Flutter interface and a
-Python backend. Development is happening in stages: the current prototype
-captures video from the computer's webcam, detects objects with a YOLOv8 model,
-and displays the annotated live stream in the Flutter app.
+AI Phone is an ongoing computer-vision project that combines a Flutter application with a Python-based backend to perform real-time object detection using YOLOv8.
 
-The current setup is intended for a desktop computer and a browser running on
-that same computer. Using a phone's camera is a future step; mobile support is
-not configured yet.
+The current prototype captures video from a computer's webcam, processes each frame using an Ultralytics YOLOv8 model, and streams the annotated video to a Flutter application through a FastAPI backend.
 
-Future development may move the backend to a server and connect it to a
-Raspberry Pi camera or another supported camera source. In that setup, the
-Flutter app could view the server's processed video stream instead of relying
-on the local computer's webcam.
+The project is being developed in stages, starting with a local desktop and browser experience before exploring mobile camera integration, remote video streaming, and external camera hardware.
 
-## Project status and direction
+## Demo
 
-The project is under active development. The current focus is getting the
-computer-vision pipeline and Flutter interface working reliably in a browser
-and on desktop before expanding to phones or remote camera hardware.
+*Screenshots and demonstration GIFs will be added as development progresses.*
 
-Possible next stages include:
+## Project Status
 
-- Improving the desktop and browser experience and handling camera or stream
-  errors more clearly.
-- Making the backend configurable for different cameras and deployment
-  environments.
-- Hosting the backend on a server so the Flutter app can connect over a
-  network.
-- Exploring a Raspberry Pi camera or another compatible camera as a video
-  source.
-- Adding mobile support, including phone-camera integration where appropriate.
+**Under Active Development** 🚧
 
-These are future development goals, not features of the current prototype.
+The current implementation supports local webcam capture, YOLOv8 object detection, MJPEG video streaming, and a Flutter interface.
 
-## How it works
+Mobile camera integration, remote backend hosting, and Raspberry Pi camera support are planned future improvements and are not currently implemented.
 
-1. The backend opens the computer's default webcam (camera index `0`).
-2. The backend uses Ultralytics YOLOv8, loading its `yolov8n.pt` Nano
-   pre-trained object-detection model, and runs detection on each captured
-   frame. The Nano model is a relatively small general-purpose model suitable
-   for trying this prototype.
-3. FastAPI serves the annotated frames as an MJPEG stream at
-   `http://localhost:8000/video_test`.
-4. The Flutter app displays that stream.
+## Features
 
-## What the YOLO model does
+### Implemented
 
-YOLO stands for **You Only Look Once**. It is an object-detection model: it
-processes each camera frame and predicts the locations and types of objects it
-recognizes. The backend draws boxes and labels around those detections before
-sending the frame to Flutter.
+- Real-time object detection using YOLOv8 Nano.
+- Webcam video capture using OpenCV.
+- Object localization with bounding boxes and class labels.
+- Python backend powered by FastAPI.
+- MJPEG video streaming.
+- Flutter interface for displaying processed video.
+- Local browser and Windows desktop execution.
 
-This project uses **YOLOv8 Nano** (`yolov8n.pt`), the small, fast variant of
-Ultralytics' YOLOv8 model. The standard pretrained weights recognize common
-objects from the COCO dataset, such as people, vehicles, and animals; they do
-not recognize every possible object. Detection quality depends on the object,
-lighting, camera, and processing hardware. Recognizing project-specific
-objects would require training or obtaining a compatible custom model.
+### Planned
 
-No `.env` file is needed for the current prototype. The stream URL and backend
-settings are currently defined directly in the source code.
+- Mobile camera integration.
+- Remote backend deployment.
+- Configurable camera sources.
+- Raspberry Pi camera integration.
+- Network-based video streaming.
+- Improved camera connection and error handling.
+- Additional computer-vision capabilities.
+
+## Technology Stack
+
+| Component | Technology |
+|---|---|
+| Frontend | Flutter / Dart |
+| Backend | Python |
+| API Framework | FastAPI |
+| Computer Vision | OpenCV |
+| Object Detection | Ultralytics YOLOv8 |
+| Video Streaming | MJPEG |
+| Model | YOLOv8 Nano (`yolov8n.pt`) |
+
+## Architecture
+
+The current prototype uses a local processing architecture.
+
+```mermaid
+flowchart TD
+    A[Computer Webcam] --> B[OpenCV Frame Capture]
+    B --> C[YOLOv8 Object Detection]
+    C --> D[Annotated Video Frames]
+    D --> E[FastAPI MJPEG Endpoint]
+    E --> F[Flutter Application]
+```
+
+### Processing Workflow
+
+1. The Python backend accesses the computer's default webcam using OpenCV.
+2. Each captured frame is passed to the YOLOv8 Nano model.
+3. YOLOv8 identifies recognized objects and their locations.
+4. The backend draws bounding boxes and class labels on the frames.
+5. FastAPI exposes the processed frames through an MJPEG stream.
+6. The Flutter application connects to the endpoint and displays the live video.
+
+## YOLOv8 Object Detection
+
+This project uses **YOLOv8 Nano (`yolov8n.pt`)**, a lightweight object-detection model developed by Ultralytics.
+
+YOLO stands for *You Only Look Once*. It processes an image and predicts the locations and classes of objects in that image.
+
+The pretrained model supports common object categories from the COCO dataset, including people, vehicles, animals, and everyday objects.
+
+Detection performance depends on lighting, camera quality, object visibility, and available processing resources.
+
+The current implementation uses pretrained weights. Detecting project-specific objects may require a separately trained or compatible custom model.
 
 ## Requirements
 
 - Python 3.10 or newer
-- Flutter SDK with Dart 3.8.1 or newer
+- Flutter SDK
+- Dart SDK 3.8.1 or newer
 - A webcam connected to the computer
-- Google Chrome for browser mode
-- Windows desktop build tools for the Windows desktop target (Visual Studio
-  with the **Desktop development with C++** workload)
+- Google Chrome for browser execution
+- Visual Studio with the Desktop development with C++ workload for Windows desktop execution
 
-## Setup
+## Installation and Setup
 
-Open two terminals in the project folder.
+### 1. Clone the Repository
 
-### 1. Set up and start the backend
+```bash
+git clone https://github.com/navin20/AI-Phone.git
+cd AI-Phone
+```
 
-In the first terminal, create a Python virtual environment and install the
-backend packages:
+### 2. Set Up the Python Backend
+
+Navigate to the backend directory:
+
+```bash
+cd backend
+```
+
+Create a virtual environment.
+
+**Windows:**
 
 ```powershell
-cd backend
 py -m venv venv
 .\venv\Scripts\activate
+```
+
+**macOS / Linux:**
+
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
+
+Install the backend dependencies:
+
+```bash
 python -m pip install --upgrade pip
 python -m pip install fastapi uvicorn ultralytics opencv-python
 ```
 
-The project includes `backend/yolov8n.pt`. If that file is missing, Ultralytics
-can download the official YOLOv8 Nano weights when you first load the model.
-With the virtual environment activated and the terminal still in `backend`,
-run:
+### 3. Prepare the YOLOv8 Model
 
-```powershell
+The project uses `yolov8n.pt`.
+
+The model file is expected in the `backend` directory. If it is missing, Ultralytics can download the pretrained weights when they are first loaded.
+
+```bash
 python -c "from ultralytics import YOLO; YOLO('yolov8n.pt')"
 ```
 
-This requires an internet connection the first time. Keep the downloaded
-`yolov8n.pt` in the `backend` directory, then start the server as shown below.
-The model is loaded in `backend/main.py` by `YOLO("yolov8n.pt")`. To use
-different weights, obtain a compatible model from Ultralytics and update that
-model path; custom models may detect different classes.
+An internet connection is required for the initial download.
 
-Start the backend from the `backend` directory so it can find the model file:
+### 4. Start the Backend
 
-```powershell
+From the `backend` directory:
+
+```bash
 python main.py
 ```
 
-Keep this terminal open while using the app. The backend uses the computer's
-default webcam, so close other applications that may be using it.
+Keep the backend running while using the Flutter application.
 
-### 2. Set up Flutter
+The backend uses the computer's default webcam, so ensure camera permissions are enabled and that another application is not already using it.
 
-In the second terminal:
+### 5. Set Up the Flutter Application
 
-```powershell
+Open another terminal and navigate to the mobile application directory:
+
+```bash
 cd mobile
+```
+
+Check the Flutter installation:
+
+```bash
 flutter doctor
+```
+
+Install the Flutter dependencies:
+
+```bash
 flutter pub get
 ```
 
-Resolve any missing Flutter or platform dependencies reported by `flutter doctor`
-before launching.
+### 6. Run in Google Chrome
 
-### 3. Run in a browser
+With the backend running:
 
-From the `mobile` directory, with the backend still running, start the Flutter
-web app:
-
-```powershell
+```bash
 flutter run -d chrome
 ```
 
-The browser and backend must run on the same computer because the app currently
-connects to `localhost:8000`.
+The browser and backend must run on the same computer because the current application connects to `localhost:8000`.
 
-### 4. Run as a Windows desktop app
+### 7. Run as a Windows Desktop Application
 
-From the `mobile` directory, enable the Windows desktop target if needed, then
-launch the app:
+Enable Windows desktop support if necessary:
 
-```powershell
+```bash
 flutter config --enable-windows-desktop
+```
+
+Check available devices:
+
+```bash
 flutter devices
+```
+
+Launch the application:
+
+```bash
 flutter run -d windows
 ```
 
-The backend must remain running in its separate terminal.
+The Python backend must remain running in a separate terminal.
+
+## API Reference
+
+### Video Stream
+
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/video_test` | Returns the annotated MJPEG video stream |
+
+**Local URL:**
+
+```text
+http://localhost:8000/video_test
+```
+
+The endpoint continuously provides processed webcam frames for the Flutter application.
+
+## Project Structure
+
+```text
+AI-Phone/
+│
+├── backend/
+│   ├── main.py
+│   └── yolov8n.pt
+│
+├── mobile/
+│   └── lib/
+│       └── main.dart
+│
+├── LICENSE
+├── README.md
+├── THIRD_PARTY_NOTICES.md
+└── ...
+```
 
 ## Troubleshooting
 
-- **The stream is blank or does not load:** make sure `python main.py` is
-  running and that `http://localhost:8000/video_test` is reachable from the
-  same computer.
-- **The camera does not open:** check OS camera permissions, connect a webcam,
-  and close other apps using it. The backend currently only tries camera index
-  `0`.
-- **The model file cannot be found:** start the backend from the `backend`
-  directory and check that `yolov8n.pt` is present there.
-- **Flutter cannot find Chrome or Windows:** run `flutter doctor`, install the
-  missing platform tools, and check available targets with `flutter devices`.
-- **Testing from a phone:** this is not supported by the current setup. The
-  app uses `localhost`, and the backend reads the computer's webcam rather
-  than the phone camera. Mobile support will need a reachable backend address
-  and phone-camera integration. A future server-hosted backend could also
-  process video from a Raspberry Pi camera or another supported camera source.
+### Video Stream Is Blank
 
-## Project structure
+- Check that the Python backend is running.
+- Open `http://localhost:8000/video_test` in a browser.
+- Confirm that the Flutter application is using the correct stream URL.
 
-```text
-backend/
-  main.py       FastAPI MJPEG stream and YOLO computer-vision processing
-  yolov8n.pt    YOLOv8 model weights
-mobile/
-  lib/main.dart Flutter app that displays the MJPEG stream
+### Webcam Cannot Be Opened
+
+- Check operating system camera permissions.
+- Ensure a webcam is connected.
+- Close applications that may already be using the camera.
+- The current implementation uses camera index `0`.
+
+### YOLOv8 Model Cannot Be Found
+
+- Confirm that `yolov8n.pt` exists inside the `backend` directory.
+- Start the backend from the `backend` directory.
+- Check that the model path in `main.py` matches the actual file location.
+
+### Flutter Cannot Find Chrome or Windows
+
+Run:
+
+```bash
+flutter doctor
+flutter devices
 ```
+
+Install any missing platform dependencies reported by Flutter.
+
+### Cannot Access the Application From a Phone
+
+Mobile access is not currently configured.
+
+The application connects to `localhost:8000`, and the backend processes the computer's webcam rather than the phone's camera.
+
+Future mobile support will require a reachable backend address and appropriate camera integration.
+
+## Current Limitations
+
+- Local webcam capture only.
+- Camera index `0` is currently used.
+- Backend and Flutter application must run on the same computer.
+- No remote server deployment.
+- No phone camera integration.
+- No Raspberry Pi camera integration.
+- Object detection is limited to the supported classes of the selected model.
+
+## Roadmap
+
+| Stage | Development Goal | Status |
+|---|---|---|
+| 1 | Python webcam capture | Implemented |
+| 2 | YOLOv8 object detection | Implemented |
+| 3 | FastAPI video streaming | Implemented |
+| 4 | Flutter video interface | Implemented |
+| 5 | Improve desktop and browser experience | Planned |
+| 6 | Configurable camera sources | Planned |
+| 7 | Remote backend deployment | Planned |
+| 8 | Raspberry Pi camera integration | Planned |
+| 9 | Mobile camera integration | Planned |
+
+## License
+
+This project is licensed under the **GNU Affero General Public License v3.0 (AGPL-3.0)**.
+
+See the [LICENSE](LICENSE) file for the complete license terms.
+
+This project uses Ultralytics YOLOv8, which is distributed under AGPL-3.0 by default, with an alternative Enterprise License available.
+
+Third-party libraries and dependencies remain subject to their respective license terms.
+
+See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for third-party acknowledgements and licensing information.
+
+Official licensing references:
+
+- [GNU AGPL-3.0](https://www.gnu.org/licenses/agpl-3.0.html)
+- [Ultralytics Licensing](https://www.ultralytics.com/license)
+
+## Acknowledgements
+
+- [Ultralytics](https://github.com/ultralytics/ultralytics) for YOLOv8 and its pretrained object-detection models.
+- [Flutter](https://flutter.dev/) for the cross-platform application framework.
+- [FastAPI](https://fastapi.tiangolo.com/) for the Python API framework.
+- [OpenCV](https://opencv.org/) for computer-vision and video-processing capabilities.
+
+## Author
+
+**Navin Singh**
+
+GitHub: [@navin20](https://github.com/navin20)
+
+---
+
+*AI Phone is a computer-vision development project. Features and architecture are subject to change as development continues.*
