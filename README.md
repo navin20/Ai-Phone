@@ -78,13 +78,25 @@ flowchart TD
 
 This project uses **YOLOv8 Nano (`yolov8n.pt`)**, a lightweight object-detection model developed by Ultralytics.
 
-YOLO stands for *You Only Look Once*. It processes an image and predicts the locations and classes of objects in that image.
+YOLO stands for *You Only Look Once*. It processes an image and predicts the locations and classes of objects within that image.
 
-The pretrained model supports common object categories from the COCO dataset, including people, vehicles, animals, and everyday objects.
+### COCO Dataset
 
-Detection performance depends on lighting, camera quality, object visibility, and available processing resources.
+The pretrained YOLOv8 Nano model uses the **COCO (Common Objects in Context) dataset**, which contains 80 object categories.
 
-The current implementation uses pretrained weights. Detecting project-specific objects may require a separately trained or compatible custom model.
+These categories cover a variety of everyday objects, including people, vehicles, animals, food, furniture, electronics, and sports equipment.
+
+### Supported Object Categories
+
+The following table lists the 80 categories supported by the standard pretrained COCO model.
+
+| Category | Recognized Objects |
+|---|---|
+| People | Person |
+| Vehicles | Bicycle, car, motorcycle, airplane, bus, train, truck, boat |
+| Traffic objects | Traffic light, fire hydrant, stop sign, parking meter, bench |
+| Accessories | Backpack, umbrella, handbag, tie, suitcase |
+| Animals | Bird, cat, dog, horse, sheep
 
 ## Requirements
 
