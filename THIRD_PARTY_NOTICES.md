@@ -4,17 +4,22 @@ AI Phone uses third-party open-source libraries, frameworks, and machine-learnin
 
 Each third-party component remains subject to its respective license and copyright terms.
 
-## 1. Ultralytics YOLOv8
+## Ultralytics YOLOv8
 
-- **Project:** Ultralytics YOLOv8
+- **Developer:** Ultralytics
+- **Project:** YOLOv8
 - **Repository:** https://github.com/ultralytics/ultralytics
 - **Model:** YOLOv8 Nano (`yolov8n.pt`)
-- **License:** AGPL-3.0
-- **Licensing information:** https://www.ultralytics.com/license
+- **License:** GNU Affero General Public License v3.0 (AGPL-3.0)
+- **License information:** https://www.ultralytics.com/license
 
-Ultralytics YOLOv8 is used for real-time object detection.
+AI Phone uses the pretrained YOLOv8 Nano model for real-time object detection.
 
-The pretrained model weights are provided by Ultralytics and remain subject to their applicable licensing terms.
+The `yolov8n.pt` model weights are provided by Ultralytics and are subject to the applicable AGPL-3.0 licensing terms.
+
+Ultralytics retains its original copyright and licensing notices.
+
+The AI Phone project makes its corresponding source code available under AGPL-3.0 in accordance with the applicable licensing requirements.
 
 ## 2. Flutter
 
